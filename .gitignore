@@ -1,0 +1,5 @@
+.next
+node_modules
+expense-tracker.sqlite
+uploads
+.env*
