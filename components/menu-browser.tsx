@@ -22,12 +22,13 @@ export function MenuBrowser({
   onAdd?: (item: CartItem) => void;
 }) {
   const [query, setQuery] = useState("");
-  const [category, setCategory] = useState("all");
+  const [category, setCategory] = useState(categories[0]?.slug || "specials");
   const [customizing, setCustomizing] = useState<MenuItem | null>(null);
+  const groupsForItem = useMemo(() => groupsForItemFactory(modifierGroups), [modifierGroups]);
 
   const filtered = useMemo(() => {
     return items.filter((item) => {
-      const matchesCategory = category === "all" || item.category?.slug === category;
+      const matchesCategory = category === "specials" ? item.featured || item.category?.slug === "specials" : item.category?.slug === category;
       const haystack = `${item.name} ${item.description} ${item.category?.name}`.toLowerCase();
       return matchesCategory && haystack.includes(query.toLowerCase());
     });
@@ -63,14 +64,14 @@ export function MenuBrowser({
       </div>
       <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
         {filtered.map((item) => (
-          <MenuCard key={item.id} item={item} onAdd={() => (modifierGroups.length ? setCustomizing(item) : add(item))} />
+          <MenuCard key={item.id} item={item} onAdd={() => (groupsForItem(item).length ? setCustomizing(item) : add(item))} />
         ))}
       </div>
       {!filtered.length && <p className="rounded-lg border border-dashed border-stone-300 bg-white p-8 text-center text-stone-600">No menu items match that search.</p>}
       {customizing && (
         <ModifierDialog
           item={customizing}
-          groups={modifierGroups}
+          groups={groupsForItem(customizing)}
           onClose={() => setCustomizing(null)}
           onAdd={(modifiers) => {
             add(customizing, modifiers);
@@ -81,6 +82,13 @@ export function MenuBrowser({
       {!onAdd && <FloatingCart />}
     </div>
   );
+}
+
+function groupsForItemFactory(groups: ModifierGroup[]) {
+  return (item: MenuItem) => {
+    const productGroups = groups.filter((group) => group.menu_item_id === item.id);
+    return productGroups.length ? productGroups : groups.filter((group) => !group.menu_item_id);
+  };
 }
 
 function ModifierDialog({

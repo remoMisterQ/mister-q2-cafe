@@ -1,16 +1,31 @@
 import Link from "next/link";
+import Image from "next/image";
 import { Clock, MapPin, Phone } from "lucide-react";
 import type { Location } from "@/types/location";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 
-export function LocationCard({ location, showMap = false }: { location: Location; showMap?: boolean }) {
+export function LocationCard({ location, showMap = false, imageUrl }: { location: Location; showMap?: boolean; imageUrl?: string }) {
+  const mapSrc = extractMapSrc(location.map_embed_url);
+
   return (
-    <Card className="overflow-hidden">
+    <Card className="overflow-hidden transition duration-300 hover:-translate-y-1 hover:scale-[1.02] hover:shadow-[0_24px_70px_rgba(33,22,15,0.16)]">
+      {imageUrl && !showMap && (
+        <div className="relative aspect-[16/10] bg-latte">
+          <Image src={imageUrl} alt={`${location.name} cafe atmosphere`} fill sizes="(max-width: 768px) 100vw, 50vw" className="object-cover" />
+        </div>
+      )}
       {showMap && (
         <div className="grid aspect-[16/9] place-items-center bg-latte/45 text-center text-sm font-semibold text-stone-700">
-          {location.map_embed_url ? (
-            <iframe src={location.map_embed_url} className="h-full w-full border-0" loading="lazy" title={`${location.name} map`} />
+          {mapSrc ? (
+            <iframe
+              src={mapSrc}
+              className="h-full w-full border-0"
+              loading="lazy"
+              allowFullScreen
+              referrerPolicy="no-referrer-when-downgrade"
+              title={`${location.name} map`}
+            />
           ) : (
             <span>Google Maps embed placeholder</span>
           )}
@@ -41,4 +56,10 @@ export function LocationCard({ location, showMap = false }: { location: Location
       </CardContent>
     </Card>
   );
+}
+
+function extractMapSrc(value: string | null | undefined) {
+  if (!value) return "";
+  const match = value.match(/src="([^"]+)"/);
+  return match?.[1] || value;
 }

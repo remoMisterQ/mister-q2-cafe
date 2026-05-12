@@ -7,15 +7,18 @@ export function Hero() {
   return (
     <section className="relative overflow-hidden bg-espresso text-white">
       <Image
-        src="https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?auto=format&fit=crop&w=1800&q=80"
-        alt="Warm modern coffee shop interior"
+        src="https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=1800&q=85"
+        alt="Clean modern cafe counter with coffee and pastries"
         fill
         priority
         sizes="100vw"
-        className="object-cover opacity-58"
+        className="object-cover opacity-68"
       />
-      <div className="absolute inset-0 bg-gradient-to-r from-black/72 via-black/42 to-black/18" />
+      <div className="absolute inset-0 bg-gradient-to-r from-black/86 via-black/58 to-black/28" />
       <div className="container-page relative min-h-[calc(100vh-8rem)] max-h-[820px] py-20">
+        <div className="absolute left-0 right-0 top-4 mx-auto w-fit rounded-lg border border-white/20 bg-white/12 px-4 py-2 text-center text-xs font-bold uppercase tracking-[0.14em] text-white backdrop-blur">
+          Now accepting pickup orders at all locations
+        </div>
         <div className="flex min-h-[520px] max-w-2xl flex-col justify-center">
           <p className="mb-4 flex w-fit items-center gap-2 rounded-lg bg-white/12 px-3 py-2 text-sm font-semibold backdrop-blur">
             <MapPin size={16} />

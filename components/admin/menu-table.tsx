@@ -2,15 +2,27 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { Pencil, Trash2 } from "lucide-react";
-import type { Category, MenuItem } from "@/types/menu";
+import { Pencil, Settings2, Trash2 } from "lucide-react";
+import type { Category, MenuItem, ModifierGroup } from "@/types/menu";
 import type { Location } from "@/types/location";
 import { currency } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { MenuForm } from "@/components/admin/menu-form";
+import { ModifierManager } from "@/components/admin/modifier-manager";
 
-export function MenuTable({ items, categories, locations }: { items: MenuItem[]; categories: Category[]; locations: Location[] }) {
+export function MenuTable({
+  items,
+  categories,
+  locations,
+  modifierGroups
+}: {
+  items: MenuItem[];
+  categories: Category[];
+  locations: Location[];
+  modifierGroups: ModifierGroup[];
+}) {
   const [editing, setEditing] = useState<MenuItem | null>(null);
+  const [customizing, setCustomizing] = useState<MenuItem | null>(null);
 
   async function remove(id: string) {
     if (!confirm("Delete this menu item?")) return;
@@ -21,6 +33,7 @@ export function MenuTable({ items, categories, locations }: { items: MenuItem[];
   return (
     <div className="grid gap-5">
       {editing && <MenuForm item={editing} categories={categories} locations={locations} />}
+      {customizing && <ModifierManager item={customizing} groups={modifierGroups} />}
       <div className="overflow-x-auto rounded-lg border border-stone-200 bg-white shadow-soft">
         <table className="w-full min-w-[860px] text-left text-sm">
           <thead className="bg-cream text-espresso">
@@ -55,7 +68,11 @@ export function MenuTable({ items, categories, locations }: { items: MenuItem[];
                   <div className="flex gap-2">
                     <Button type="button" size="sm" variant="secondary" onClick={() => setEditing(item)}>
                       <Pencil size={15} />
-                      Edit Photo
+                      Edit
+                    </Button>
+                    <Button type="button" size="sm" variant="secondary" onClick={() => setCustomizing(item)}>
+                      <Settings2 size={15} />
+                      Customize
                     </Button>
                     <Button type="button" size="icon" variant="secondary" onClick={() => remove(item.id)} aria-label={`Delete ${item.name}`}>
                       <Trash2 size={15} />

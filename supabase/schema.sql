@@ -47,6 +47,7 @@ create table if not exists menu_item_locations (
 
 create table if not exists modifier_groups (
   id uuid primary key default gen_random_uuid(),
+  menu_item_id uuid references menu_items(id) on delete cascade,
   name text not null,
   slug text unique not null,
   min_select int not null default 0,
@@ -54,6 +55,8 @@ create table if not exists modifier_groups (
   active boolean not null default true,
   created_at timestamp with time zone not null default now()
 );
+
+alter table modifier_groups add column if not exists menu_item_id uuid references menu_items(id) on delete cascade;
 
 create table if not exists modifier_options (
   id uuid primary key default gen_random_uuid(),

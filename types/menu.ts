@@ -32,6 +32,7 @@ export type ModifierOption = {
 
 export type ModifierGroup = {
   id: string;
+  menu_item_id?: string | null;
   name: string;
   slug: string;
   min_select: number;

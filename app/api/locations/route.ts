@@ -23,13 +23,18 @@ export async function PUT(request: NextRequest) {
       zip: String(formData.get("zip") || ""),
       phone: String(formData.get("phone") || ""),
       hours: String(formData.get("hours") || ""),
-      map_embed_url: String(formData.get("map_embed_url") || ""),
+      map_embed_url: extractMapSrc(String(formData.get("map_embed_url") || "")),
       active: formData.get("active") === "on"
     })
     .eq("id", id);
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
   return NextResponse.json({ ok: true });
+}
+
+function extractMapSrc(value: string) {
+  const match = value.match(/src="([^"]+)"/);
+  return match?.[1] || value;
 }
 
 async function requireSignedInAdmin() {

@@ -14,9 +14,6 @@ export function CategoryTabs({
 }) {
   return (
     <div className="flex gap-2 overflow-x-auto pb-2">
-      <Button type="button" variant={active === "all" ? "default" : "secondary"} size="sm" onClick={() => onChange("all")}>
-        All
-      </Button>
       {categories.map((category) => (
         <Button
           key={category.id}

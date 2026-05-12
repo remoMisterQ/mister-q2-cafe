@@ -6,57 +6,58 @@ export const locations: Location[] = [
     id: "11111111-1111-1111-1111-111111111111",
     name: "Charlestown",
     slug: "charlestown",
-    address: "123 Main Street",
+    address: "283 Main St",
     city: "Charlestown",
     state: "MA",
     zip: "02129",
-    phone: "(617) 555-0111",
+    phone: "(617) 398-6228",
     hours: "6:00 AM - 5:00 PM",
-    map_embed_url: "",
+    map_embed_url: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3496.1477738754147!2d-71.0694122235211!3d42.37755803399542!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89e371525d9a1037%3A0x46893ffcbe162f7!2smister%20Q.%20cafe!5e1!3m2!1sen!2sus!4v1778612388621!5m2!1sen!2sus",
     active: true
   },
   {
     id: "22222222-2222-2222-2222-222222222222",
     name: "Revere",
     slug: "revere",
-    address: "45 Beach Street",
+    address: "791 Broadway",
     city: "Revere",
     state: "MA",
     zip: "02151",
     phone: "(781) 555-0122",
     hours: "6:00 AM - 5:00 PM",
-    map_embed_url: "",
+    map_embed_url: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3493.9300454714753!2d-71.00979852351945!3d42.41737673147808!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89e37181e433290b%3A0xb658c1599a6c036f!2sMister%20Q%20Cafe%20Revere!5e1!3m2!1sen!2sus!4v1778612344268!5m2!1sen!2sus",
     active: true
   },
   {
     id: "33333333-3333-3333-3333-333333333333",
     name: "Cambridge",
     slug: "cambridge",
-    address: "88 River Avenue",
+    address: "150 Western Ave",
     city: "Cambridge",
     state: "MA",
     zip: "02139",
     phone: "(617) 555-0133",
     hours: "6:00 AM - 5:00 PM",
-    map_embed_url: "",
+    map_embed_url: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3496.8588501642266!2d-71.1114037235216!3d42.364784434802445!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89e377888237b429%3A0xd2c87540396ce5fe!2sMister%20Q%20Cafe%20Cambridge!5e1!3m2!1sen!2sus!4v1778612441967!5m2!1sen!2sus",
     active: true
   },
   {
     id: "44444444-4444-4444-4444-444444444444",
     name: "Marblehead",
     slug: "marblehead",
-    address: "7 Harbor Lane",
+    address: "34 Atlantic Ave",
     city: "Marblehead",
     state: "MA",
     zip: "01945",
-    phone: "(781) 555-0144",
+    phone: "(781) 309-6776",
     hours: "6:00 AM - 5:00 PM",
-    map_embed_url: "",
+    map_embed_url: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3489.3655433030017!2d-70.86033291014904!3d42.49923595199826!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89e315d49ba42793%3A0xe8f77463ef7493c3!2sPlus%20Cafe!5e1!3m2!1sen!2sus!4v1778612412960!5m2!1sen!2sus",
     active: true
   }
 ];
 
 export const categories: Category[] = [
+  { id: "aaaaaaaa-0000-0000-0000-000000000000", name: "Specials", slug: "specials", sort_order: 0, active: true },
   { id: "aaaaaaaa-0000-0000-0000-000000000001", name: "Coffee", slug: "coffee", sort_order: 1, active: true },
   { id: "aaaaaaaa-0000-0000-0000-000000000002", name: "Iced Drinks", slug: "iced-drinks", sort_order: 2, active: true },
   { id: "aaaaaaaa-0000-0000-0000-000000000003", name: "Pastries", slug: "pastries", sort_order: 3, active: true },
@@ -119,6 +120,7 @@ export const menuItems: MenuItem[] = [
 export const modifierGroups: ModifierGroup[] = [
   {
     id: "cccccccc-0000-0000-0000-000000000001",
+    menu_item_id: null,
     name: "Size",
     slug: "size",
     min_select: 1,
@@ -132,6 +134,7 @@ export const modifierGroups: ModifierGroup[] = [
   },
   {
     id: "cccccccc-0000-0000-0000-000000000002",
+    menu_item_id: null,
     name: "Milk",
     slug: "milk",
     min_select: 0,
@@ -145,6 +148,7 @@ export const modifierGroups: ModifierGroup[] = [
   },
   {
     id: "cccccccc-0000-0000-0000-000000000003",
+    menu_item_id: null,
     name: "Extras",
     slug: "extras",
     min_select: 0,
