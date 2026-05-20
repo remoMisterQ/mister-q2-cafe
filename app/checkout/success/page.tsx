@@ -30,9 +30,16 @@ export default async function CheckoutSuccessPage({ searchParams }: { searchPara
               <Detail label="Pickup location" value={order?.location?.name || "Selected cafe"} />
               <Detail label="Pickup time" value={order?.pickup_time || "Selected pickup time"} />
             </div>
-            <Button asChild>
-              <Link href="/menu">Back to menu</Link>
-            </Button>
+            <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
+              {order?.order_number && (
+                <Button asChild>
+                  <Link href={`/order/status/${order.order_number}`}>Track order status</Link>
+                </Button>
+              )}
+              <Button asChild variant="secondary">
+                <Link href="/menu">Back to menu</Link>
+              </Button>
+            </div>
           </CardContent>
         </Card>
       </div>

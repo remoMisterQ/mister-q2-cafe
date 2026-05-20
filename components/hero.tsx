@@ -15,17 +15,17 @@ export function Hero() {
         className="object-cover opacity-68"
       />
       <div className="absolute inset-0 bg-gradient-to-r from-black/86 via-black/58 to-black/28" />
-      <div className="container-page relative min-h-[calc(100vh-8rem)] max-h-[820px] py-20">
-        <div className="absolute left-0 right-0 top-4 mx-auto w-fit rounded-lg border border-white/20 bg-white/12 px-4 py-2 text-center text-xs font-bold uppercase tracking-[0.14em] text-white backdrop-blur">
+      <div className="container-page relative min-h-[620px] py-14 md:min-h-[calc(100vh-8rem)] md:max-h-[820px] md:py-20">
+        <div className="mx-auto w-fit rounded-lg border border-white/20 bg-white/12 px-3 py-2 text-center text-[0.68rem] font-bold uppercase tracking-[0.12em] text-white backdrop-blur md:absolute md:left-0 md:right-0 md:top-4 md:px-4 md:text-xs">
           Now accepting pickup orders at all locations
         </div>
-        <div className="flex min-h-[520px] max-w-2xl flex-col justify-center">
+        <div className="flex min-h-[470px] max-w-2xl flex-col justify-center md:min-h-[520px]">
           <p className="mb-4 flex w-fit items-center gap-2 rounded-lg bg-white/12 px-3 py-2 text-sm font-semibold backdrop-blur">
             <MapPin size={16} />
             Four pickup cafes across Massachusetts
           </p>
-          <h1 className="text-5xl font-black leading-none tracking-normal md:text-7xl">Mister Q Cafe</h1>
-          <p className="mt-6 max-w-xl text-lg leading-8 text-white/88">
+          <h1 className="text-4xl font-black leading-none tracking-normal md:text-7xl">Mister Q Cafe</h1>
+          <p className="mt-5 max-w-xl text-base leading-7 text-white/88 md:text-lg md:leading-8">
             Modern boutique coffee, breakfast, sandwiches, soups, and ice cream made for easy online pickup.
           </p>
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">

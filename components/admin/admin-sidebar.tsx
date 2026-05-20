@@ -1,11 +1,13 @@
 import Link from "next/link";
-import { ClipboardList, Coffee, LayoutDashboard, MapPin } from "lucide-react";
+import { BadgePercent, ClipboardList, Coffee, Images, LayoutDashboard, MapPin } from "lucide-react";
 
 const links = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
   { href: "/admin/menu", label: "Menu", icon: Coffee },
   { href: "/admin/orders", label: "Orders", icon: ClipboardList },
-  { href: "/admin/locations", label: "Locations", icon: MapPin }
+  { href: "/admin/locations", label: "Locations", icon: MapPin },
+  { href: "/admin/gallery", label: "Gallery", icon: Images },
+  { href: "/admin/discounts", label: "Discounts", icon: BadgePercent }
 ];
 
 export function AdminSidebar() {

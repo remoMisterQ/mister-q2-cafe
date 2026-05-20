@@ -4,13 +4,14 @@ import { useEffect, useMemo, useState } from "react";
 import type { Category, CartItem, MenuItem } from "@/types/menu";
 import type { ModifierGroup } from "@/types/menu";
 import type { Location } from "@/types/location";
-import { CartSidebar } from "@/components/cart-sidebar";
-import { CheckoutButton } from "@/components/checkout-button";
+import { CartSidebar, getCartTotals } from "@/components/cart-sidebar";
 import { LocationSelector } from "@/components/location-selector";
 import { MenuBrowser } from "@/components/menu-browser";
 import { PickupTimeSelector } from "@/components/pickup-time-selector";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { ShoppingBag } from "lucide-react";
+import { currency } from "@/lib/utils";
 
 export function OrderFlow({
   locations,
@@ -30,6 +31,7 @@ export function OrderFlow({
   const [locationId, setLocationId] = useState("");
   const [pickupTime, setPickupTime] = useState("ASAP - 15 min");
   const [tip, setTip] = useState(0);
+  const [discountCode, setDiscountCode] = useState("");
   const [customer, setCustomer] = useState({ name: "", phone: "", email: "", notes: "" });
 
   useEffect(() => {
@@ -123,7 +125,16 @@ export function OrderFlow({
           <h2 className="text-xl font-black text-espresso">Customer info</h2>
           <div className="grid gap-4 md:grid-cols-3">
             <Input id="customer-name" placeholder="Name" value={customer.name} onChange={(event) => setCustomer({ ...customer, name: event.target.value })} required />
-            <Input id="customer-phone" placeholder="Phone" value={customer.phone} onChange={(event) => setCustomer({ ...customer, phone: event.target.value })} required />
+            <Input
+              id="customer-phone"
+              type="tel"
+              inputMode="numeric"
+              pattern="[0-9]*"
+              placeholder="Phone"
+              value={customer.phone}
+              onChange={(event) => setCustomer({ ...customer, phone: event.target.value.replace(/\D/g, "") })}
+              required
+            />
             <Input id="customer-email" type="email" placeholder="Email" value={customer.email} onChange={(event) => setCustomer({ ...customer, email: event.target.value })} required />
           </div>
           <Textarea placeholder="Pickup notes" value={customer.notes} onChange={(event) => setCustomer({ ...customer, notes: event.target.value })} />
@@ -131,14 +142,53 @@ export function OrderFlow({
       </div>
 
       <div id="cart" className="grid h-fit gap-4 lg:sticky lg:top-24">
-        <CartSidebar cart={cart} tip={tip} onTipChange={setTip} onIncrement={increment} onDecrement={decrement} onRemove={remove} />
-        <CheckoutButton payload={{ locationId, pickupTime, customer, cart, tip }} validationErrors={validationErrors} onValidationFail={scrollToFirstMissingField} />
+        <CartSidebar
+          cart={cart}
+          tip={tip}
+          onTipChange={setTip}
+          discountCode={discountCode}
+          onDiscountCodeChange={setDiscountCode}
+          onIncrement={increment}
+          onDecrement={decrement}
+          onRemove={remove}
+          checkoutPayload={{ locationId, pickupTime, customer, cart, tip, discountCode }}
+          validationErrors={validationErrors}
+          onValidationFail={scrollToFirstMissingField}
+        />
         {!canCheckout && (
           <p className="text-sm leading-6 text-stone-600">
             Choose a location, pickup time, at least one available item, and customer info to continue.
           </p>
         )}
       </div>
+      <MobileOrderCartBar cart={cart} tip={tip} />
     </div>
+  );
+}
+
+function MobileOrderCartBar({ cart, tip }: { cart: CartItem[]; tip: number }) {
+  if (!cart.length) return null;
+
+  const quantity = cart.reduce((sum, item) => sum + item.quantity, 0);
+  const totals = getCartTotals(cart, tip);
+
+  return (
+    <a
+      href="#cart"
+      className="fixed bottom-3 left-3 right-3 z-40 flex items-center justify-between gap-3 rounded-lg border border-stone-200 bg-espresso p-3 text-white shadow-soft lg:hidden"
+    >
+      <span className="flex items-center gap-3">
+        <span className="grid h-10 w-10 place-items-center rounded-lg bg-white/12">
+          <ShoppingBag size={18} />
+        </span>
+        <span>
+          <span className="block text-sm font-black">
+            {quantity} item{quantity === 1 ? "" : "s"}
+          </span>
+          <span className="text-xs text-white/75">View cart</span>
+        </span>
+      </span>
+      <strong>{currency(totals.total)}</strong>
+    </a>
   );
 }

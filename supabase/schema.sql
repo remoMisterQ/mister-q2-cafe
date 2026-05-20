@@ -94,15 +94,41 @@ create table if not exists order_items (
   quantity int not null check (quantity > 0),
   unit_price numeric(10, 2) not null,
   total_price numeric(10, 2) not null,
-  modifiers jsonb not null default '[]'::jsonb
+  modifiers jsonb not null default '[]'::jsonb,
+  item_comment text
 );
 
 alter table order_items add column if not exists modifiers jsonb not null default '[]'::jsonb;
+alter table order_items add column if not exists item_comment text;
+alter table orders add column if not exists discount_code text;
+alter table orders add column if not exists discount_amount numeric(10, 2) not null default 0;
+
+create table if not exists gallery_images (
+  id uuid primary key default gen_random_uuid(),
+  title text not null,
+  image_url text not null,
+  sort_order int not null default 0,
+  active boolean not null default true,
+  created_at timestamp with time zone not null default now()
+);
+
+create table if not exists discount_codes (
+  id uuid primary key default gen_random_uuid(),
+  code text unique not null,
+  type text not null check (type in ('percent', 'fixed')),
+  value numeric(10, 2) not null check (value > 0),
+  active boolean not null default true,
+  starts_at timestamp with time zone,
+  expires_at timestamp with time zone,
+  created_at timestamp with time zone not null default now()
+);
 
 create index if not exists menu_items_category_idx on menu_items(category_id);
 create index if not exists menu_item_locations_item_idx on menu_item_locations(menu_item_id);
 create index if not exists orders_created_at_idx on orders(created_at desc);
 create index if not exists orders_status_idx on orders(order_status);
+create index if not exists gallery_images_sort_idx on gallery_images(sort_order);
+create index if not exists discount_codes_code_idx on discount_codes(code);
 
 insert into storage.buckets (id, name, public)
 values ('menu-images', 'menu-images', true)
@@ -116,6 +142,8 @@ alter table modifier_groups enable row level security;
 alter table modifier_options enable row level security;
 alter table orders enable row level security;
 alter table order_items enable row level security;
+alter table gallery_images enable row level security;
+alter table discount_codes enable row level security;
 
 drop policy if exists "Public can read active locations" on locations;
 create policy "Public can read active locations" on locations for select using (active = true);
@@ -129,6 +157,8 @@ drop policy if exists "Public can read modifier groups" on modifier_groups;
 create policy "Public can read modifier groups" on modifier_groups for select using (active = true);
 drop policy if exists "Public can read modifier options" on modifier_options;
 create policy "Public can read modifier options" on modifier_options for select using (active = true);
+drop policy if exists "Public can read active gallery images" on gallery_images;
+create policy "Public can read active gallery images" on gallery_images for select using (active = true);
 
 drop policy if exists "Authenticated admins manage locations" on locations;
 create policy "Authenticated admins manage locations" on locations for all using (auth.role() = 'authenticated') with check (auth.role() = 'authenticated');
@@ -148,6 +178,10 @@ drop policy if exists "Authenticated admins update orders" on orders;
 create policy "Authenticated admins update orders" on orders for update using (auth.role() = 'authenticated') with check (auth.role() = 'authenticated');
 drop policy if exists "Authenticated admins read order items" on order_items;
 create policy "Authenticated admins read order items" on order_items for select using (auth.role() = 'authenticated');
+drop policy if exists "Authenticated admins manage gallery images" on gallery_images;
+create policy "Authenticated admins manage gallery images" on gallery_images for all using (auth.role() = 'authenticated') with check (auth.role() = 'authenticated');
+drop policy if exists "Authenticated admins manage discount codes" on discount_codes;
+create policy "Authenticated admins manage discount codes" on discount_codes for all using (auth.role() = 'authenticated') with check (auth.role() = 'authenticated');
 
 drop policy if exists "Public menu image reads" on storage.objects;
 create policy "Public menu image reads" on storage.objects for select using (bucket_id = 'menu-images');

@@ -49,4 +49,5 @@ export type CartItem = MenuItem & {
   cart_id?: string;
   quantity: number;
   selected_modifiers?: SelectedModifier[];
+  item_comment?: string;
 };

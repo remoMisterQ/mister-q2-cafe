@@ -46,7 +46,7 @@ export function CheckoutButton({
 
   return (
     <div className="grid gap-2">
-      <Button type="button" onClick={checkout} disabled={loading}>
+      <Button type="button" onClick={checkout} disabled={loading} className="h-12 w-full text-base">
         <CreditCard size={17} />
         {loading ? "Placing order..." : "Continue"}
       </Button>

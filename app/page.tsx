@@ -1,12 +1,12 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, CheckCircle2, Clock, CupSoda, Quote, Sparkles, Star } from "lucide-react";
+import { ArrowRight, Quote, Star } from "lucide-react";
 import { Hero } from "@/components/hero";
 import { LocationCard } from "@/components/location-card";
 import { MenuCard } from "@/components/menu-card";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { getFeaturedMenuItems, getLocations } from "@/lib/data";
+import { getFeaturedMenuItems, getGalleryImages, getLocations } from "@/lib/data";
 
 const locationImages: Record<string, string> = {
   charlestown: "https://images.unsplash.com/photo-1511081692775-05d0f180a065?auto=format&fit=crop&w=1000&q=80",
@@ -14,33 +14,6 @@ const locationImages: Record<string, string> = {
   cambridge: "https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&w=1000&q=80",
   marblehead: "https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=1000&q=80"
 };
-
-const seasonalSpecials = [
-  {
-    name: "Honey Lavender Latte",
-    price: "$6.75",
-    image: "https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&w=900&q=85"
-  },
-  {
-    name: "Pistachio Cold Brew",
-    price: "$6.25",
-    image: "https://images.unsplash.com/photo-1461023058943-07fcbe16d735?auto=format&fit=crop&w=900&q=85"
-  },
-  {
-    name: "Strawberry Cream Croissant",
-    price: "$5.95",
-    image: "https://images.unsplash.com/photo-1509365465985-25d11c17e812?auto=format&fit=crop&w=900&q=85"
-  }
-];
-
-const galleryImages = [
-  "https://images.unsplash.com/photo-1511081692775-05d0f180a065?auto=format&fit=crop&w=900&q=85",
-  "https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=900&q=85",
-  "https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&w=900&q=85",
-  "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=900&q=85",
-  "https://images.unsplash.com/photo-1517701604599-bb29b565090c?auto=format&fit=crop&w=900&q=85",
-  "https://images.unsplash.com/photo-1525351484163-7529414344d8?auto=format&fit=crop&w=900&q=85"
-];
 
 const reviews = [
   {
@@ -61,7 +34,7 @@ const reviews = [
 ];
 
 export default async function HomePage() {
-  const [featured, locations] = await Promise.all([getFeaturedMenuItems(), getLocations()]);
+  const [featured, locations, galleryImages] = await Promise.all([getFeaturedMenuItems(), getLocations(), getGalleryImages()]);
 
   return (
     <main>
@@ -74,39 +47,6 @@ export default async function HomePage() {
             {featured.map((item) => (
               <MenuCard key={item.id} item={item} />
             ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="section-pad bg-cream">
-        <div className="container-page">
-          <SectionHeader eyebrow="Seasonal specials" title="Small-batch favorites for right now." actionHref="/order" actionLabel="Order Specials" />
-          <div className="grid gap-5 md:grid-cols-3">
-            {seasonalSpecials.map((special) => (
-              <Card key={special.name} className="overflow-hidden">
-                <div className="relative aspect-[4/3] bg-latte">
-                  <Image src={special.image} alt={special.name} fill sizes="(max-width: 768px) 100vw, 33vw" className="object-cover transition duration-300 hover:scale-105" />
-                </div>
-                <CardContent>
-                  <p className="text-sm font-bold uppercase tracking-[0.12em] text-mocha">Limited time</p>
-                  <div className="mt-2 flex items-center justify-between gap-3">
-                    <h3 className="text-xl font-black text-espresso">{special.name}</h3>
-                    <strong>{special.price}</strong>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="section-pad bg-white">
-        <div className="container-page">
-          <SectionHeader eyebrow="How pickup works" title="Three steps to a better coffee run." />
-          <div className="grid gap-5 md:grid-cols-3">
-            <Step number="01" title="Choose a cafe" copy="Select Charlestown, Revere, Cambridge, or Marblehead." />
-            <Step number="02" title="Build your order" copy="Pick drinks, food, modifiers, notes, and pickup time." />
-            <Step number="03" title="Pickup fresh" copy="Your order is organized for a smooth pickup-only visit." />
           </div>
         </div>
       </section>
@@ -152,8 +92,8 @@ export default async function HomePage() {
           </SectionHeader>
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {galleryImages.map((image, index) => (
-              <div key={image} className="relative aspect-square overflow-hidden rounded-lg bg-latte">
-                <Image src={image} alt={`Mister Q cafe gallery ${index + 1}`} fill sizes="(max-width: 768px) 50vw, 33vw" className="object-cover transition duration-300 hover:scale-105" />
+              <div key={image.id || image.image_url} className="relative aspect-square overflow-hidden rounded-lg bg-latte">
+                <Image src={image.image_url} alt={image.title || `Mister Q cafe gallery ${index + 1}`} fill sizes="(max-width: 768px) 50vw, 33vw" className="object-cover transition duration-300 hover:scale-105" />
               </div>
             ))}
           </div>
@@ -198,16 +138,6 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section className="section-pad bg-cream">
-        <div className="container-page">
-          <SectionHeader eyebrow="Why order ahead" title="Pickup that respects your morning." />
-          <div className="grid gap-5 md:grid-cols-3">
-            <Why icon={<Clock />} title="Ready timing" copy="Pick ASAP, 30 minutes, 45 minutes, or a custom pickup time." />
-            <Why icon={<CupSoda />} title="Full cafe menu" copy="Coffee, iced drinks, pastries, breakfast, sandwiches, soups, and ice cream in one cart." />
-            <Why icon={<Sparkles />} title="Simple checkout" copy="Quick pickup checkout now, with Stripe-ready routes available for payments later." />
-          </div>
-        </div>
-      </section>
     </main>
   );
 }
@@ -229,7 +159,7 @@ function SectionHeader({
     <div className="mb-8 flex flex-col justify-between gap-4 md:flex-row md:items-end">
       <div className="max-w-2xl">
         <p className="text-sm font-bold uppercase tracking-[0.14em] text-mocha">{eyebrow}</p>
-        <h2 className="mt-2 text-3xl font-black text-espresso md:text-4xl">{title}</h2>
+        <h2 className="mt-2 text-2xl font-black text-espresso md:text-4xl">{title}</h2>
         {children && <p className="mt-4 leading-7 text-stone-600">{children}</p>}
       </div>
       {actionHref && actionLabel && (
@@ -241,32 +171,5 @@ function SectionHeader({
         </Button>
       )}
     </div>
-  );
-}
-
-function Step({ number, title, copy }: { number: string; title: string; copy: string }) {
-  return (
-    <Card>
-      <CardContent>
-        <div className="mb-5 flex items-center justify-between">
-          <span className="text-3xl font-black text-mocha">{number}</span>
-          <CheckCircle2 className="text-espresso" size={24} />
-        </div>
-        <h3 className="text-lg font-black text-espresso">{title}</h3>
-        <p className="mt-2 text-sm leading-6 text-stone-600">{copy}</p>
-      </CardContent>
-    </Card>
-  );
-}
-
-function Why({ icon, title, copy }: { icon: React.ReactNode; title: string; copy: string }) {
-  return (
-    <Card>
-      <CardContent>
-        <div className="mb-5 grid h-11 w-11 place-items-center rounded-lg bg-espresso text-white">{icon}</div>
-        <h3 className="text-lg font-black text-espresso">{title}</h3>
-        <p className="mt-2 text-sm leading-6 text-stone-600">{copy}</p>
-      </CardContent>
-    </Card>
   );
 }

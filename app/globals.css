@@ -48,6 +48,16 @@ button:disabled {
   padding-block: 72px;
 }
 
+@media (max-width: 640px) {
+  .container-page {
+    width: min(100% - 24px, 1180px);
+  }
+
+  .section-pad {
+    padding-block: 44px;
+  }
+}
+
 .focus-ring {
   outline: none;
 }

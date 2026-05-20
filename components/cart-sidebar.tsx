@@ -7,6 +7,8 @@ import { currency } from "@/lib/utils";
 import { cartItemKey, cartItemTotal, cartItemUnitPrice } from "@/lib/cart";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { CheckoutButton } from "@/components/checkout-button";
+import type { CheckoutPayload } from "@/types/order";
 
 export function getCartTotals(cart: CartItem[], tip: number) {
   const subtotal = roundMoney(cart.reduce((sum, item) => sum + cartItemTotal(item), 0));
@@ -19,16 +21,26 @@ export function CartSidebar({
   cart,
   tip,
   onTipChange,
+  discountCode,
+  onDiscountCodeChange,
   onIncrement,
   onDecrement,
-  onRemove
+  onRemove,
+  checkoutPayload,
+  validationErrors,
+  onValidationFail
 }: {
   cart: CartItem[];
   tip: number;
   onTipChange: (value: number) => void;
+  discountCode: string;
+  onDiscountCodeChange: (value: string) => void;
   onIncrement: (id: string) => void;
   onDecrement: (id: string) => void;
   onRemove: (id: string) => void;
+  checkoutPayload: CheckoutPayload;
+  validationErrors: string[];
+  onValidationFail: () => void;
 }) {
   const totals = getCartTotals(cart, tip);
 
@@ -47,6 +59,7 @@ export function CartSidebar({
                     {item.selected_modifiers.map((modifier) => `${modifier.group_name}: ${modifier.name}`).join(", ")}
                   </p>
                 )}
+                {item.item_comment && <p className="mt-1 text-xs leading-5 text-mocha">Comment: {item.item_comment}</p>}
               </div>
               <button type="button" className="text-stone-500 hover:text-red-700" onClick={() => onRemove(cartItemKey(item))} aria-label={`Remove ${item.name}`}>
                 <Trash2 size={16} />
@@ -73,6 +86,10 @@ export function CartSidebar({
           Tip
           <Input type="number" min="0" step="0.01" value={tip} onChange={(event) => onTipChange(Number(event.target.value))} />
         </label>
+        <label className="grid gap-2 text-sm font-semibold text-espresso">
+          Discount code
+          <Input placeholder="Optional promo code" value={discountCode} onChange={(event) => onDiscountCodeChange(event.target.value.toUpperCase())} />
+        </label>
         <Summary label="Subtotal" value={totals.subtotal} />
         <Summary label="MA tax 6.25%" value={totals.tax} />
         <Summary label="Tip" value={tip} />
@@ -80,6 +97,7 @@ export function CartSidebar({
           <span>Total</span>
           <span>{currency(totals.total)}</span>
         </div>
+        <CheckoutButton payload={checkoutPayload} validationErrors={validationErrors} onValidationFail={onValidationFail} />
       </div>
     </aside>
   );

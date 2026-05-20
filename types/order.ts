@@ -24,6 +24,8 @@ export type Order = {
   tax: number;
   tip: number;
   total: number;
+  discount_code?: string | null;
+  discount_amount?: number;
   stripe_session_id: string | null;
   payment_status: string;
   order_status: OrderStatus;
@@ -36,4 +38,5 @@ export type CheckoutPayload = {
   customer: CustomerInfo;
   cart: CartItem[];
   tip: number;
+  discountCode?: string;
 };

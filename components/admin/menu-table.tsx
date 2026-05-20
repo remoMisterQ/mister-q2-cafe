@@ -7,6 +7,7 @@ import type { Category, MenuItem, ModifierGroup } from "@/types/menu";
 import type { Location } from "@/types/location";
 import { currency } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { Select } from "@/components/ui/select";
 import { MenuForm } from "@/components/admin/menu-form";
 import { ModifierManager } from "@/components/admin/modifier-manager";
 
@@ -23,6 +24,9 @@ export function MenuTable({
 }) {
   const [editing, setEditing] = useState<MenuItem | null>(null);
   const [customizing, setCustomizing] = useState<MenuItem | null>(null);
+  const [categoryFilter, setCategoryFilter] = useState("all");
+  const selectedCategory = categories.find((category) => getCategoryKey(category) === categoryFilter);
+  const filteredItems = categoryFilter === "all" ? items : items.filter((item) => matchesCategory(item, categoryFilter, selectedCategory));
 
   async function remove(id: string) {
     if (!confirm("Delete this menu item?")) return;
@@ -35,6 +39,25 @@ export function MenuTable({
       {editing && <MenuForm item={editing} categories={categories} locations={locations} />}
       {customizing && <ModifierManager item={customizing} groups={modifierGroups} />}
       <div className="overflow-x-auto rounded-lg border border-stone-200 bg-white shadow-soft">
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-stone-100 p-4">
+          <div>
+            <h2 className="text-lg font-black text-espresso">Menu items</h2>
+            <p className="text-sm text-stone-600">
+              Showing {filteredItems.length} of {items.length} item{items.length === 1 ? "" : "s"}
+            </p>
+          </div>
+          <label className="grid gap-1 text-sm font-semibold text-espresso">
+            Category
+            <Select value={categoryFilter} onChange={(event) => setCategoryFilter(event.target.value)} className="min-w-48">
+              <option value="all">All categories</option>
+              {categories.map((category) => (
+                <option key={category.id} value={getCategoryKey(category)}>
+                  {category.name}
+                </option>
+              ))}
+            </Select>
+          </label>
+        </div>
         <table className="w-full min-w-[860px] text-left text-sm">
           <thead className="bg-cream text-espresso">
             <tr>
@@ -47,7 +70,7 @@ export function MenuTable({
             </tr>
           </thead>
           <tbody>
-            {items.map((item) => (
+            {filteredItems.map((item) => (
               <tr key={item.id} className="border-t border-stone-100">
                 <td className="p-3">
                   <div className="flex items-center gap-3">
@@ -81,9 +104,27 @@ export function MenuTable({
                 </td>
               </tr>
             ))}
+            {!filteredItems.length && (
+              <tr>
+                <td colSpan={6} className="p-8 text-center text-stone-600">
+                  No menu items in this category.
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>
     </div>
   );
+}
+
+function getCategoryKey(category: Category) {
+  return category.slug || category.id;
+}
+
+function matchesCategory(item: MenuItem, categoryKey: string, category?: Category) {
+  if (categoryKey === "specials") return item.featured || item.category?.slug === "specials" || item.category?.name?.toLowerCase() === "specials";
+  if (item.category_id === categoryKey || item.category?.id === categoryKey || item.category?.slug === categoryKey) return true;
+  if (!category) return false;
+  return item.category?.slug === category.slug || item.category?.name?.toLowerCase() === category.name.toLowerCase();
 }
