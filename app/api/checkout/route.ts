@@ -70,7 +70,7 @@ export async function POST(request: NextRequest) {
   );
   if (itemsError) return NextResponse.json({ error: itemsError.message }, { status: 500 });
 
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || request.nextUrl.origin;
+  const siteUrl = getCheckoutSiteUrl(request);
   await sendOrderConfirmationEmail({
     customer: payload.customer,
     orderNumber: order.order_number,
@@ -79,6 +79,22 @@ export async function POST(request: NextRequest) {
   });
 
   return NextResponse.json({ url: `${siteUrl}/checkout/success?order=${order.id}` });
+}
+
+function getCheckoutSiteUrl(request: NextRequest) {
+  const configuredUrl = process.env.NEXT_PUBLIC_SITE_URL;
+  const requestOrigin = request.nextUrl.origin;
+  if (!configuredUrl) return requestOrigin;
+
+  try {
+    const configured = new URL(configuredUrl);
+    const requested = new URL(requestOrigin);
+    const configuredIsLocalhost = configured.hostname === "localhost" || configured.hostname === "127.0.0.1";
+    const requestIsDifferentHost = requested.hostname !== configured.hostname;
+    return configuredIsLocalhost && requestIsDifferentHost ? requestOrigin : configured.origin;
+  } catch {
+    return requestOrigin;
+  }
 }
 
 async function getDiscount(supabase: NonNullable<ReturnType<typeof createServiceClient>>, discountCode: string | undefined, subtotal: number) {
